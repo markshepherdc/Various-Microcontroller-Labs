@@ -1,0 +1,62 @@
+*Mark Shepherd
+*ENGR 385 TEST 1
+*2/10/2012
+
+
+
+
+
+pstart  equ     $4100    *variable to start program at location $4100
+tocount equ     $1000    *Stores variable cpint at $1000
+realCou equ     $1000
+        ORG     pstart   *Reference variable for starting loacation
+        
+        ldx  #$7000        *loads $7000 in to c
+        ldaa $#52          *Loads 52 in as a counter
+        ldy  #0           *Uses 0 to start count
+        sty  tocount      *stores 0 in the count variablr
+*----------------------------------
+cloop    inx              *increments x to go through different memory locations
+        deca              *Decrement a by 1 everytime the loop is excecuted
+        beq  done         *
+        ldab 0,x          *Pointer towarads memory location
+        cmpb #$FF         *Compares value in memory loacation to FF
+        lbeq  count     *If it is equal to FF, the go to the count lable to increment the count and Change FF to AA
+        bra  cloop        *Otherwise return to the loop
+*----------------------------------
+count  ldy  tocount       *Loads count variable previously saved
+       iny                *Increments tocount variable by one
+       
+*Stores to $1001 instead of $1000 because its in a 2byte register       
+*sty  tocount       *Stores that value fpr the count
+
+*correction
+
+*sty $999        *to have a two number offset
+
+    sty  tocount
+    psha            *pusha a to top of stack
+    ldaa tocount    *loads to count
+    staa realCou    *saves to count to accumalator A
+    pula            *pulls aou of stack
+    
+
+*I have to store where the pointer is pointed
+*ldy  #$AA          *Loads #$ into that specific memory location
+*sty  #$AA          *Stores it
+
+*Corection
+    psha                *temporarily store aa
+    ldaa #$AA           *loads $AA in
+    staa 0,x            *stores $AA at the pointed memory loacation
+    pula                *pulls A off stack
+
+*or 
+
+*movb #$AA 0,x
+
+
+
+       bra  cloop
+*-----------------------------------
+done   swi
